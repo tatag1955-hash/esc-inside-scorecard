@@ -1,0 +1,119 @@
+
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090d2b">
+<title>ESC! INSIDE — JESC 2026 Scorecard</title>
+<style>
+:root{color-scheme:dark;--text:#f7f7ff;--muted:#bbc3ed;--line:#ffffff25;--pink:#f29bff;--blue:#83d6ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 15% 0%,#293f87 0,transparent 45%),radial-gradient(ellipse at 100% 35%,#51206d 0,transparent 40%),#080b22;color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:880px;margin:auto;padding:22px 14px 52px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:32px}
+.logo{font-size:15px;font-weight:900;letter-spacing:.17em}
+.logo small{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em;margin-top:5px}
+.pill{border:1px solid var(--line);border-radius:99px;padding:8px 12px;color:#e3e8ff;font-size:11px;letter-spacing:.12em}
+.kicker{color:var(--blue);font-size:12px;letter-spacing:.2em;font-weight:800}
+h1{font-size:clamp(42px,10vw,76px);letter-spacing:-.065em;line-height:.92;margin:12px 0}
+h1 span{color:var(--pink)}
+.lead{font-size:17px;line-height:1.55;color:#d0d6fb;max-width:630px;margin:18px 0 24px}
+.panel{border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,#ffffff13,#ffffff05);box-shadow:0 18px 50px #0004,inset 0 1px #ffffff0b;backdrop-filter:blur(16px)}
+.toolbar{padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.progress{font-size:14px;color:var(--muted);font-weight:650}
+.btn{border:1px solid #ffffff25;border-radius:13px;padding:13px 17px;color:white;background:linear-gradient(120deg,#7865ff,#c565e6);font-size:14px;font-weight:800;cursor:pointer}
+.btn.secondary{background:#ffffff0b}
+.entries{display:grid;gap:11px}
+.entry{padding:17px;display:grid;grid-template-columns:44px 42px minmax(0,1fr);gap:12px;align-items:center}
+.rank{font-size:14px;color:#aeb9ff;font-weight:850}
+.flag{font-size:31px}
+.country{font-size:clamp(17px,3.5vw,21px);font-weight:800;letter-spacing:-.02em}
+.hint{font-size:12px;color:var(--muted);margin-top:5px}
+.scorebox{grid-column:3;display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.score{width:clamp(28px,7vw,39px);height:39px;border:1px solid #ffffff24;background:#ffffff09;color:#e1e5ff;border-radius:10px;font-size:14px;font-weight:750;cursor:pointer}
+.score.on{background:linear-gradient(135deg,#6d68ff,#d36ee8);border-color:#ffffff90;color:white;box-shadow:0 0 15px #b16bff40}
+.footer{padding:17px;margin-top:18px;display:grid;gap:13px}
+.footer p{color:var(--muted);line-height:1.5;font-size:13px;margin:0}
+.results{display:none;margin-top:18px;padding:20px}
+.results h2{font-size:26px;margin:0 0 12px}
+.result{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:16px}
+.result:last-child{border-bottom:0}
+.value{font-weight:900;color:var(--pink)}
+.small{font-size:12px;line-height:1.5;color:var(--muted);margin-top:15px}
+.toast{display:none;position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#242a54;border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:90%;font-size:14px}
+@media(min-width:650px){.entries{grid-template-columns:1fr 1fr}.entry{grid-template-columns:30px 36px minmax(0,1fr);padding:16px}.scorebox{grid-column:1/-1}.score{width:30px;height:34px;font-size:12px}}
+@media(max-width:420px){.entry{padding:14px 12px;grid-template-columns:30px 32px minmax(0,1fr);gap:8px}.flag{font-size:27px}.scorebox{gap:4px}.score{width:calc((100% - 36px)/10);height:32px;font-size:11px;padding:0}.toolbar{align-items:flex-start;flex-direction:column}.toolbar .btn{width:100%}}
+</style>
+</head>
+<body>
+<main>
+<header class="head"><div class="logo">ESC! INSIDE<small>EUROVISION FAN COMMUNITY</small></div><div class="pill">JESC · 2026</div></header>
+<div class="kicker">YOUR PERSONAL SCORECARD</div>
+<h1>RATE THE<br><span>SONGS.</span></h1>
+<p class="lead">Поставь каждой заявке оценку от 1 до 10. В конце получишь собственный рейтинг всех 16 стран — и сможешь поделиться им с другими еврофанами.</p>
+<section class="panel toolbar"><div class="progress" id="progress">Оценено 0 из 16 стран</div><button class="btn secondary" id="reset">Начать заново</button></section>
+<section class="entries" id="entries"></section>
+<section class="panel footer"><p>Выставь оценки всем участникам, чтобы открыть свой итоговый рейтинг.</p><button class="btn" id="make">ПОКАЗАТЬ МОЙ ТОП</button></section>
+<section class="panel results" id="results"><h2>ТВОЙ РЕЙТИНГ</h2><div id="sorted"></div><button class="btn" id="share" style="width:100%;margin-top:15px">ПОДЕЛИТЬСЯ РЕЗУЛЬТАТОМ</button><p class="small">Демо-версия: результат формируется в твоём браузере. Общая статистика подписчиков появится после подключения общей базы данных.</p></section>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const data=[["🇦🇲","Армения"],["🇦🇱","Албания"],["🇺🇦","Украина"],["🇲🇰","Северная Македония"],["🇵🇱","Польша"],["🇸🇲","Сан-Марино"],["🇲🇪","Черногория"],["🇪🇸","Испания"],["🇨🇾","Кипр"],["🇳🇱","Нидерланды"],["🇬🇪","Грузия"],["🇲🇹","Мальта"],["🇵🇹","Португалия"],["🇮🇹","Италия"],["🇫🇷","Франция"],["🇮🇪","Ирландия"]];
+const values={};
+const entries=document.getElementById("entries");
+data.forEach(([flag,name],i)=>{
+const el=document.createElement("article");
+el.className="panel entry";
+el.innerHTML=`<div class="rank">${String(i+1).padStart(2,"0")}</div><div class="flag">${flag}</div><div><div class="country">${name}</div><div class="hint">ТВОЯ ОЦЕНКА · 1–10</div></div><div class="scorebox">${Array.from({length:10},(_,n)=>`<button class="score" data-i="${i}" data-v="${n+1}" aria-label="${name}: ${n+1} из 10">${n+1}</button>`).join("")}</div>`;
+entries.appendChild(el);
+});
+function refresh(){
+document.getElementById("progress").textContent=`Оценено ${Object.keys(values).length} из 16 стран`;
+document.querySelectorAll(".score").forEach(b=>b.classList.toggle("on",values[b.dataset.i]===Number(b.dataset.v)));
+}
+entries.addEventListener("click",e=>{
+const b=e.target.closest(".score");
+if(!b)return;
+values[b.dataset.i]=Number(b.dataset.v);
+refresh();
+});
+document.getElementById("reset").onclick=()=>{
+Object.keys(values).forEach(k=>delete values[k]);
+document.getElementById("results").style.display="none";
+refresh();
+window.scrollTo({top:0,behavior:"smooth"});
+};
+document.getElementById("make").onclick=()=>{
+if(Object.keys(values).length!==16){
+toast(`Осталось оценить стран: ${16-Object.keys(values).length}`);
+return;
+}
+const sorted=data.map((c,i)=>({...c,score:values[i],i})).sort((a,b)=>b.score-a.score||a.i-b.i);
+document.getElementById("sorted").innerHTML=sorted.map((c,i)=>`<div class="result"><span>${String(i+1).padStart(2,"0")} &nbsp; ${c[0]} ${c[1]}</span><span class="value">${c.score}/10</span></div>`).join("");
+document.getElementById("results").style.display="block";
+document.getElementById("results").scrollIntoView({behavior:"smooth"});
+};
+document.getElementById("share").onclick=async()=>{
+const sorted=data.map((c,i)=>({...c,score:values[i],i})).sort((a,b)=>b.score-a.score||a.i-b.i);
+const shareText="МОЙ JESC 2026 SCORECARD · ESC! INSIDE\n"+sorted.map((c,i)=>`${i+1}. ${c[0]} ${c[1]} — ${c.score}/10`).join("\n");
+try{
+if(navigator.share)await navigator.share({title:"Мой JESC 2026 Scorecard",text:shareText});
+else{
+await navigator.clipboard.writeText(shareText);
+toast("Рейтинг скопирован — вставь его в Telegram.");
+}
+}catch(e){
+if(e.name!=="AbortError")toast("Не удалось поделиться результатом.");
+}
+};
+function toast(t){
+const el=document.getElementById("toast");
+el.textContent=t;
+el.style.display="block";
+setTimeout(()=>el.style.display="none",2500);
+}
+refresh();
+</script>
+</body>
+</html>
